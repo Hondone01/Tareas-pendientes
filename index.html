@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas Pendientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+            color: red;
+            font-size: 1.2em;
+        }
+        li.completed {
+            color: green;
+            text-decoration: line-through;
+        }
+        .countdown {
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        @media (max-width: 600px) {
+            li {
+                font-size: 1em;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Tareas Pendientes</h1>
+    <ul id="task-list">
+        <li>Finalizar filmina Cmonster <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Checkear chatgpt en el mail <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Organizar videos youtube <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Descargar canciones spoty <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Instalar plattform io para visual <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Trasladar proyecto arduino a visual <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Realizar primeros pasos esp32 <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Proyectar proyecto esp32 <input type="checkbox" /> <span class="countdown">30 días</span></li>
+        <li>Inicializarlo <input type="checkbox" /> <span class="countdown">30 días</span></li>
+    </ul>
+    <script>
+        const tasks = document.querySelectorAll("#task-list li");
+        const countdowns = document.querySelectorAll(".countdown");
+
+        // Load saved state from localStorage
+        function loadState() {
+            tasks.forEach((task, index) => {
+                const checkbox = task.querySelector("input[type='checkbox']");
+                const isCompleted = localStorage.getItem(`task-${index}-completed`) === "true";
+                const remainingTime = localStorage.getItem(`task-${index}-remaining-time`);
+                
+                if (isCompleted) {
+                    task.classList.add("completed");
+                    checkbox.checked = true;
+                }
+                
+                if (remainingTime) {
+                    countdowns[index].textContent = `${remainingTime} días`;
+                }
+            });
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            tasks.forEach((task, index) => {
+                const checkbox = task.querySelector("input[type='checkbox']");
+                const remainingDays = parseInt(countdowns[index].textContent);
+                localStorage.setItem(`task-${index}-completed`, checkbox.checked);
+                localStorage.setItem(`task-${index}-remaining-time`, remainingDays);
+            });
+        }
+
+        // Countdown logic
+        function startCountdown(index) {
+            if (index >= countdowns.length) return;
+
+            let remainingDays = parseInt(countdowns[index].textContent);
+            const interval = setInterval(() => {
+                remainingDays--;
+                countdowns[index].textContent = `${remainingDays} días`;
+                saveState();
+
+                if (remainingDays <= 0) {
+                    clearInterval(interval);
+                    startCountdown(index + 1);
+                }
+            }, 1000); // Adjust to 86400000 ms (1 day) for real countdown
+        }
+
+        // Handle checkbox click
+        tasks.forEach((task, index) => {
+            const checkbox = task.querySelector("input[type='checkbox']");
+            checkbox.addEventListener("change", () => {
+                task.classList.toggle("completed", checkbox.checked);
+                saveState();
+            });
+        });
+
+        // Initialize
+        loadState();
+        startCountdown(0);
+    </script>
+</body>
+</html>
