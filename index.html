@@ -13,63 +13,112 @@
             text-align: center;
             color: #333;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        li {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 10px 0;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        td {
+            vertical-align: middle;
+        }
+        .task {
             color: red;
-            font-size: 1.2em;
+            font-weight: bold;
         }
-        li.completed {
+        .task.completed {
             color: green;
             text-decoration: line-through;
         }
-        .countdown {
-            font-size: 0.9em;
-            margin-left: 10px;
-        }
         @media (max-width: 600px) {
-            li {
-                font-size: 1em;
-                flex-wrap: wrap;
+            table {
+                font-size: 0.9em;
             }
         }
     </style>
 </head>
 <body>
     <h1>Tareas Pendientes</h1>
-    <ul id="task-list">
-        <li>Finalizar filmina Cmonster <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Checkear chatgpt en el mail <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Organizar videos youtube <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Descargar canciones spoty <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Instalar plattform io para visual <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Trasladar proyecto arduino a visual <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Realizar primeros pasos esp32 <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Proyectar proyecto esp32 <input type="checkbox" /> <span class="countdown">30 días</span></li>
-        <li>Inicializarlo <input type="checkbox" /> <span class="countdown">30 días</span></li>
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Tarea</th>
+                <th>Completada</th>
+                <th>Tiempo Restante</th>
+            </tr>
+        </thead>
+        <tbody id="task-list">
+            <tr>
+                <td class="task">Finalizar filmina Cmonster</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Checkear chatgpt en el mail</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Organizar videos youtube</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Descargar canciones spoty</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Instalar plattform io para visual</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Trasladar proyecto arduino a visual</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Realizar primeros pasos esp32</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Proyectar proyecto esp32</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+            <tr>
+                <td class="task">Inicializarlo</td>
+                <td><input type="checkbox" /></td>
+                <td class="countdown">30 días</td>
+            </tr>
+        </tbody>
+    </table>
     <script>
-        const tasks = document.querySelectorAll("#task-list li");
+        const tasks = document.querySelectorAll("#task-list tr");
         const countdowns = document.querySelectorAll(".countdown");
 
         // Load saved state from localStorage
         function loadState() {
             tasks.forEach((task, index) => {
                 const checkbox = task.querySelector("input[type='checkbox']");
+                const taskElement = task.querySelector(".task");
                 const isCompleted = localStorage.getItem(`task-${index}-completed`) === "true";
                 const remainingTime = localStorage.getItem(`task-${index}-remaining-time`);
-                
+
                 if (isCompleted) {
-                    task.classList.add("completed");
+                    taskElement.classList.add("completed");
                     checkbox.checked = true;
                 }
-                
+
                 if (remainingTime) {
                     countdowns[index].textContent = `${remainingTime} días`;
                 }
@@ -100,14 +149,15 @@
                     clearInterval(interval);
                     startCountdown(index + 1);
                 }
-            }, 1000); // Adjust to 86400000 ms (1 day) for real countdown
+            }, 86400000); // 1 day in milliseconds
         }
 
         // Handle checkbox click
         tasks.forEach((task, index) => {
             const checkbox = task.querySelector("input[type='checkbox']");
+            const taskElement = task.querySelector(".task");
             checkbox.addEventListener("change", () => {
-                task.classList.toggle("completed", checkbox.checked);
+                taskElement.classList.toggle("completed", checkbox.checked);
                 saveState();
             });
         });
@@ -118,3 +168,4 @@
     </script>
 </body>
 </html>
+
